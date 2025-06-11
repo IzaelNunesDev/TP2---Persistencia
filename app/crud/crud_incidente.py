@@ -21,3 +21,6 @@ def get_incidentes_by_viagem(db: Session, viagem_id: int, skip: int = 0, limit: 
         .offset(skip)
         .limit(limit)
     ).all()
+
+def count_incidentes(db: Session) -> int:
+    return db.query(Incidente).count()

@@ -1,4 +1,5 @@
-from sqlmodel import Session, select
+from sqlmodel import Session, select, func
+from sqlalchemy import extract
 from app.models.viagem import Viagem
 from app.schemas.schema_viagem import ViagemCreate
 
@@ -9,8 +10,11 @@ def create_viagem(db: Session, viagem_in: ViagemCreate) -> Viagem:
     db.refresh(viagem_obj)
     return viagem_obj
 
-def get_viagens(db: Session, skip: int = 0, limit: int = 100) -> list[Viagem]:
-    return db.exec(select(Viagem).offset(skip).limit(limit)).all()
+def get_viagens(db: Session, ano: int = None, skip: int = 0, limit: int = 100) -> list[Viagem]:
+    query = select(Viagem)
+    if ano:
+        query = query.where(extract('year', Viagem.data_viagem) == ano)
+    return db.exec(query.offset(skip).limit(limit)).all()
 
 def get_viagem_by_id(db: Session, viagem_id: int) -> Viagem | None:
     # Usando select para poder carregar os relacionamentos com options
@@ -29,3 +33,6 @@ def get_viagem_by_id(db: Session, viagem_id: int) -> Viagem | None:
         ).where(Viagem.id == viagem_id)
     ).first()
     return result
+
+def count_viagens(db: Session) -> int:
+    return db.exec(select(func.count(Viagem.id))).one()

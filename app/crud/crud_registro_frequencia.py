@@ -20,3 +20,6 @@ def get_registros_by_viagem(db: Session, viagem_id: int, skip: int = 0, limit: i
         .offset(skip)
         .limit(limit)
     ).all()
+
+def count_registros_frequencia(db: Session) -> int:
+    return db.query(RegistroFrequencia).count()

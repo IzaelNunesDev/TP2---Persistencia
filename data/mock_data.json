@@ -1,0 +1,140 @@
+{
+  "alunos": [
+    {
+      "email": "ana.silva@example.com",
+      "nome_completo": "Ana Silva",
+      "password": "senha123",
+      "matricula": "2023001",
+      "telefone": "(11) 98765-4321",
+      "possui_necessidade_especial": false
+    },
+    {
+      "email": "bruno.costa@example.com",
+      "nome_completo": "Bruno Costa",
+      "password": "senha123",
+      "matricula": "2023002",
+      "telefone": "(21) 91234-5678",
+      "possui_necessidade_especial": true
+    },
+    {
+      "email": "carla.dias@example.com",
+      "nome_completo": "Carla Dias",
+      "password": "senha123",
+      "matricula": "2023003"
+    }
+  ],
+  "motoristas": [
+    {
+      "email": "daniel.rocha@example.com",
+      "nome_completo": "Daniel Rocha",
+      "password": "senhaMotorista1",
+      "cnh": "12345678901"
+    },
+    {
+      "email": "eduarda.lima@example.com",
+      "nome_completo": "Eduarda Lima",
+      "password": "senhaMotorista2",
+      "cnh": "09876543210"
+    }
+  ],
+  "veiculos": [
+    {
+      "placa": "BRA2E19",
+      "modelo": "Mercedes-Benz Sprinter",
+      "ano": 2022,
+      "capacidade": 20,
+      "tipo_veiculo": "Van"
+    },
+    {
+      "placa": "ABC1D23",
+      "modelo": "Marcopolo Torino",
+      "ano": 2023,
+      "capacidade": 44,
+      "tipo_veiculo": "Ônibus"
+    }
+  ],
+  "rotas": [
+    {
+      "nome": "Rota A - Centro/Universidade",
+      "descricao": "Rota que atende os bairros centrais até o campus universitário."
+    },
+    {
+      "nome": "Rota B - Zona Sul/Escola Técnica",
+      "descricao": "Rota que passa pela Zona Sul e vai até a Escola Técnica Estadual."
+    }
+  ],
+  "pontos_parada": [
+    {
+      "rota_id": 1,
+      "nome": "Ponto 1 - Praça Central",
+      "latitude": -23.5505,
+      "longitude": -46.6333
+    },
+    {
+      "rota_id": 1,
+      "nome": "Ponto 2 - Biblioteca Municipal",
+      "latitude": -23.5515,
+      "longitude": -46.6353
+    },
+    {
+      "rota_id": 2,
+      "nome": "Ponto 3 - Shopping Sul",
+      "latitude": -23.6825,
+      "longitude": -46.6994
+    }
+  ],
+  "viagens": [
+    {
+      "rota_id": 1,
+      "veiculo_id": 1,
+      "motorista_id": 1,
+      "data_viagem": "2023-10-25T00:00:00",
+      "horario_saida": "2023-10-25T07:00:00",
+      "horario_chegada": "2023-10-25T08:00:00",
+      "status": "Concluída"
+    },
+    {
+      "rota_id": 2,
+      "veiculo_id": 2,
+      "motorista_id": 2,
+      "data_viagem": "2024-03-15T00:00:00",
+      "horario_saida": "2024-03-15T13:00:00",
+      "horario_chegada": "2024-03-15T14:00:00",
+      "status": "Concluída"
+    },
+    {
+      "rota_id": 1,
+      "veiculo_id": 1,
+      "motorista_id": 1,
+      "data_viagem": "2024-05-20T00:00:00",
+      "horario_saida": "2024-05-20T07:00:00",
+      "horario_chegada": null,
+      "status": "Em andamento"
+    }
+  ],
+  "incidentes": [
+    {
+      "viagem_id": 1,
+      "reportador_id": 1,
+      "descricao": "Pneu furado durante o trajeto. Atraso de 20 minutos.",
+      "tipo_incidente": "Mecânico"
+    }
+  ],
+  "registros_frequencia": [
+    {
+      "aluno_id": 1,
+      "viagem_id": 1,
+      "tipo": "Embarque"
+    },
+    {
+      "aluno_id": 2,
+      "viagem_id": 1,
+      "tipo": "Embarque"
+    },
+    {
+      "aluno_id": 1,
+      "viagem_id": 2,
+      "tipo": "Desembarque"
+    }
+  ]
+}

@@ -1,4 +1,4 @@
-from sqlmodel import Session, select
+from sqlmodel import Session, select, func
 from app.models.aluno import Aluno
 from app.models.usuario import Usuario
 from app.schemas.schema_aluno import AlunoCreate
@@ -31,9 +31,16 @@ def create_aluno(db: Session, aluno_in: AlunoCreate) -> Aluno:
     
     return aluno_obj
 
-def get_alunos(db: Session, skip: int = 0, limit: int = 100) -> list[Aluno]:
-    return db.exec(select(Aluno).offset(skip).limit(limit)).all()
+def get_alunos(db: Session, nome: str = None, skip: int = 0, limit: int = 100) -> list[Aluno]:
+    query = select(Aluno)
+    if nome:
+        # O filtro deve ser aplicado no `nome_completo` do `Usuario` associado
+        query = query.join(Usuario).where(Usuario.nome_completo.ilike(f"%{nome}%"))
+    return db.exec(query.offset(skip).limit(limit)).all()
 
 def get_aluno_by_id(db: Session, aluno_id: int) -> Aluno | None:
     return db.get(Aluno, aluno_id)
+
+def count_alunos(db: Session) -> int:
+    return db.exec(select(func.count(Aluno.id))).one()
 

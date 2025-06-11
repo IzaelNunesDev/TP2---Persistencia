@@ -16,3 +16,6 @@ def get_pontos_de_parada_by_rota(db: Session, rota_id: int, skip: int = 0, limit
         .offset(skip)
         .limit(limit)
     ).all()
+
+def count_pontos_de_parada(db: Session) -> int:
+    return db.query(PontoDeParada).count()

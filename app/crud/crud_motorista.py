@@ -1,4 +1,4 @@
-from sqlmodel import Session, select
+from sqlmodel import Session, select, func
 from app.models.motorista import Motorista
 from app.models.usuario import Usuario
 from app.schemas.schema_motorista import MotoristaCreate
@@ -32,4 +32,13 @@ def create_motorista(db: Session, motorista_in: MotoristaCreate) -> Motorista:
 
 def get_motorista_by_id(db: Session, motorista_id: int) -> Motorista | None:
     return db.get(Motorista, motorista_id)
+
+def get_motoristas(db: Session, nome: str = None, skip: int = 0, limit: int = 100) -> list[Motorista]:
+    query = select(Motorista)
+    if nome:
+        query = query.join(Usuario).where(Usuario.nome_completo.ilike(f"%{nome}%"))
+    return db.exec(query.offset(skip).limit(limit)).all()
+
+def count_motoristas(db: Session) -> int:
+    return db.exec(select(func.count(Motorista.id))).one()
 
