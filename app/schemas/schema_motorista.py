@@ -24,3 +24,9 @@ class MotoristaRead(BaseModel):
 
     class Config:
         from_attributes = True
+
+# Schema para atualização de Motorista (suporta atualizações parciais)
+class MotoristaUpdate(SQLModel):
+    cnh: Optional[str] = None
+    data_admissao: Optional[date] = None
+    status_ativo: Optional[bool] = None

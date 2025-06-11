@@ -1,7 +1,7 @@
 from sqlmodel import Session, select, func
 from sqlalchemy import extract
 from app.models.viagem import Viagem
-from app.schemas.schema_viagem import ViagemCreate
+from app.schemas.schema_viagem import ViagemCreate, ViagemUpdate
 
 def create_viagem(db: Session, viagem_in: ViagemCreate) -> Viagem:
     viagem_obj = Viagem.model_validate(viagem_in)
@@ -36,3 +36,16 @@ def get_viagem_by_id(db: Session, viagem_id: int) -> Viagem | None:
 
 def count_viagens(db: Session) -> int:
     return db.exec(select(func.count(Viagem.id))).one()
+
+def update_viagem(db: Session, viagem: Viagem, viagem_update: ViagemUpdate) -> Viagem:
+    viagem_data = viagem_update.model_dump(exclude_unset=True)
+    for key, value in viagem_data.items():
+        setattr(viagem, key, value)
+    db.add(viagem)
+    db.commit()
+    db.refresh(viagem)
+    return viagem
+
+def delete_viagem(db: Session, viagem: Viagem):
+    db.delete(viagem)
+    db.commit()

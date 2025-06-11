@@ -1,7 +1,7 @@
 from sqlmodel import Session, select, func
 from app.models.motorista import Motorista
 from app.models.usuario import Usuario
-from app.schemas.schema_motorista import MotoristaCreate
+from app.schemas.schema_motorista import MotoristaCreate, MotoristaUpdate
 from app.core.security import get_password_hash
 from app.crud.crud_usuario import get_usuario_by_email
 
@@ -41,4 +41,17 @@ def get_motoristas(db: Session, nome: str = None, skip: int = 0, limit: int = 10
 
 def count_motoristas(db: Session) -> int:
     return db.exec(select(func.count(Motorista.id))).one()
+
+def update_motorista(db: Session, motorista: Motorista, motorista_update: MotoristaUpdate) -> Motorista:
+    motorista_data = motorista_update.model_dump(exclude_unset=True)
+    for key, value in motorista_data.items():
+        setattr(motorista, key, value)
+    db.add(motorista)
+    db.commit()
+    db.refresh(motorista)
+    return motorista
+
+def delete_motorista(db: Session, motorista: Motorista):
+    db.delete(motorista)
+    db.commit()
 

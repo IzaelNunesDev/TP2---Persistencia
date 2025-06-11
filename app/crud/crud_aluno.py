@@ -1,5 +1,6 @@
 from sqlmodel import Session, select, func
 from app.models.aluno import Aluno
+from app.schemas.schema_aluno import AlunoUpdate
 from app.models.usuario import Usuario
 from app.schemas.schema_aluno import AlunoCreate
 from app.core.security import get_password_hash
@@ -44,3 +45,15 @@ def get_aluno_by_id(db: Session, aluno_id: int) -> Aluno | None:
 def count_alunos(db: Session) -> int:
     return db.exec(select(func.count(Aluno.id))).one()
 
+def update_aluno(db: Session, aluno: Aluno, aluno_update: AlunoUpdate) -> Aluno:
+    aluno_data = aluno_update.model_dump(exclude_unset=True)
+    for key, value in aluno_data.items():
+        setattr(aluno, key, value)
+    db.add(aluno)
+    db.commit()
+    db.refresh(aluno)
+    return aluno
+
+def delete_aluno(db: Session, aluno: Aluno):
+    db.delete(aluno)
+    db.commit()

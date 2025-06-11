@@ -28,5 +28,15 @@ class ViagemRead(ViagemBase):
     motorista: MotoristaRead
     veiculo: VeiculoRead
 
+
+class ViagemUpdate(SQLModel):
+    data_viagem: Optional[date] = None
+    hora_partida: Optional[datetime] = None
+    status: Optional[str] = None
+    vagas_ocupadas: Optional[int] = None
+    rota_id: Optional[int] = None
+    motorista_id: Optional[int] = None
+    veiculo_id: Optional[int] = None
+
     class Config:
         from_attributes = True

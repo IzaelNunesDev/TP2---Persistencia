@@ -23,3 +23,10 @@ class AlunoRead(BaseModel):
 
     class Config:
         from_attributes = True
+
+class AlunoUpdate(SQLModel):
+    matricula: Optional[str] = None
+    telefone: Optional[str] = None
+    possui_necessidade_especial: Optional[bool] = None
+    documento_identidade: Optional[str] = None
+    ponto_embarque_preferencial_id: Optional[int] = None
