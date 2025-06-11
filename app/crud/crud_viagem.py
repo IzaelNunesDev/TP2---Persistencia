@@ -1,0 +1,31 @@
+from sqlmodel import Session, select
+from app.models.viagem import Viagem
+from app.schemas.schema_viagem import ViagemCreate
+
+def create_viagem(db: Session, viagem_in: ViagemCreate) -> Viagem:
+    viagem_obj = Viagem.model_validate(viagem_in)
+    db.add(viagem_obj)
+    db.commit()
+    db.refresh(viagem_obj)
+    return viagem_obj
+
+def get_viagens(db: Session, skip: int = 0, limit: int = 100) -> list[Viagem]:
+    return db.exec(select(Viagem).offset(skip).limit(limit)).all()
+
+def get_viagem_by_id(db: Session, viagem_id: int) -> Viagem | None:
+    # Usando select para poder carregar os relacionamentos com options
+    # Isso é mais eficiente do que o lazy loading padrão em muitos casos.
+    from app.models.rota import Rota
+    from app.models.motorista import Motorista
+    from app.models.veiculo import Veiculo
+    from sqlmodel import select
+    from sqlalchemy.orm import selectinload
+
+    result = db.exec(
+        select(Viagem).options(
+            selectinload(Viagem.rota),
+            selectinload(Viagem.motorista),
+            selectinload(Viagem.veiculo)
+        ).where(Viagem.id == viagem_id)
+    ).first()
+    return result
