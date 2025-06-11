@@ -1,6 +1,6 @@
 from sqlmodel import Field, SQLModel, Relationship
 from datetime import date
-from typing import Optional
+from typing import Optional, List
 from .usuario import Usuario
 
 class Motorista(SQLModel, table=True):
@@ -11,3 +11,5 @@ class Motorista(SQLModel, table=True):
 
     usuario_id: int = Field(foreign_key="usuario.id", unique=True)
     usuario: Usuario = Relationship(back_populates="motorista")
+
+    viagens: List["Viagem"] = Relationship(back_populates="motorista")

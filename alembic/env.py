@@ -9,7 +9,7 @@ from alembic import context
 from sqlmodel import SQLModel
 from app.core.config import settings # Para pegar a URL do DB
 # Importe seus modelos aqui para que o Alembic os encontre
-from app.models import aluno, motorista, veiculo, rota, ponto_de_parada, viagem, registro_frequencia, incidente, administrador
+from app.models import aluno, motorista, veiculo, rota, ponto_de_parada, viagem, registro_frequencia, incidente, usuario
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.

@@ -1,5 +1,5 @@
-from sqlmodel import Field, SQLModel
-from typing import Optional
+from sqlmodel import Field, SQLModel, Relationship
+from typing import Optional, List
 from datetime import date, datetime
 
 class Viagem(SQLModel, table=True):
@@ -11,3 +11,10 @@ class Viagem(SQLModel, table=True):
     rota_id: int = Field(foreign_key="rota.id")
     motorista_id: int = Field(foreign_key="motorista.id")
     veiculo_id: int = Field(foreign_key="veiculo.id")
+
+    rota: Optional["Rota"] = Relationship(back_populates="viagens")
+    motorista: Optional["Motorista"] = Relationship(back_populates="viagens")
+    veiculo: Optional["Veiculo"] = Relationship(back_populates="viagens")
+
+    registros_frequencia: List["RegistroFrequencia"] = Relationship(back_populates="viagem")
+    incidentes: List["Incidente"] = Relationship(back_populates="viagem")
