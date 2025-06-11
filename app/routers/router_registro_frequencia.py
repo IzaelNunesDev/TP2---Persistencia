@@ -15,7 +15,7 @@ def create_new_registro_frequencia(registro: RegistroFrequenciaCreate, db: Sessi
     # Validações
     if not crud_viagem.get_viagem_by_id(db, registro.viagem_id):
         raise HTTPException(status_code=404, detail=f"Viagem com id {registro.viagem_id} não encontrada")
-    if not crud_aluno.get_aluno_by_id(db, registro.aluno_id):
+    if not crud_aluno.get_aluno_by_id(db, aluno_id=registro.aluno_id):
         raise HTTPException(status_code=404, detail=f"Aluno com id {registro.aluno_id} não encontrado")
 
     return crud_registro_frequencia.create_registro_frequencia(db=db, registro_in=registro)

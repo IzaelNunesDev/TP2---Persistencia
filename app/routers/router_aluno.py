@@ -3,7 +3,7 @@ from sqlmodel import Session
 from typing import List
 
 from app.core.database import get_session
-from app.crud import crud_aluno
+from app.crud import crud_aluno, crud_usuario
 from app.schemas import schema_aluno
 
 router = APIRouter()
@@ -14,10 +14,10 @@ def create_aluno_endpoint(
     db: Session = Depends(get_session),
     aluno_in: schema_aluno.AlunoCreate
 ):
-    db_aluno = crud_aluno.get_aluno_by_email(db, email=aluno_in.email)
-    if db_aluno:
+    db_user = crud_usuario.get_usuario_by_email(db, email=aluno_in.email)
+    if db_user:
         raise HTTPException(status_code=400, detail="Email já cadastrado.")
-    return crud_aluno.create_aluno(db=db, aluno=aluno_in)
+    return crud_aluno.create_aluno(db=db, aluno_in=aluno_in)
 
 @router.get("/", response_model=List[schema_aluno.AlunoRead])
 def read_alunos_endpoint(

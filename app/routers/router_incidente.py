@@ -3,8 +3,7 @@ from sqlmodel import Session
 from typing import List
 from app.core.database import get_db
 from app.schemas.schema_incidente import IncidenteCreate, IncidenteRead
-from app.crud import crud_incidente, crud_viagem
-from app.crud.crud_aluno import get_usuario_by_id 
+from app.crud import crud_incidente, crud_viagem, crud_usuario
 
 router = APIRouter()
 
@@ -16,8 +15,8 @@ def create_new_incidente(incidente: IncidenteCreate, db: Session = Depends(get_d
     # Validações
     if not crud_viagem.get_viagem_by_id(db, incidente.viagem_id):
         raise HTTPException(status_code=404, detail=f"Viagem com id {incidente.viagem_id} não encontrada")
-    if not get_usuario_by_id(db, incidente.reportado_por_usuario_id):
-        raise HTTPException(status_code=404, detail=f"Usuário reportador com id {incidente.reportado_por_usuario_id} não encontrado")
+    if not crud_usuario.get_usuario_by_id(db, user_id=incidente.reportador_id):
+        raise HTTPException(status_code=404, detail=f"Usuário reportador com id {incidente.reportador_id} não encontrado")
 
     return crud_incidente.create_incidente(db=db, incidente_in=incidente)
 

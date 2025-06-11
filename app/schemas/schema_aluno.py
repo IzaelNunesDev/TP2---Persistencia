@@ -1,10 +1,6 @@
 from pydantic import BaseModel, EmailStr
 from typing import Optional
-
-# Propriedades base do Usuário (reusável)
-class UsuarioBase(BaseModel):
-    email: EmailStr
-    nome_completo: str
+from .schema_usuario import UsuarioRead
 
 # Schema para criação de Aluno (recebe tudo que precisa)
 class AlunoCreate(BaseModel):
@@ -18,12 +14,6 @@ class AlunoCreate(BaseModel):
     telefone: Optional[str] = None
     possui_necessidade_especial: Optional[bool] = False
     documento_identidade: Optional[str] = None
-
-# Schema de Leitura para o Usuário
-class UsuarioRead(UsuarioBase):
-    id: int
-    class Config:
-        from_attributes = True
 
 # Schema de Leitura para o Aluno (pode incluir o usuário)
 class AlunoRead(BaseModel):

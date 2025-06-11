@@ -3,7 +3,7 @@ from app.models.motorista import Motorista
 from app.models.usuario import Usuario
 from app.schemas.schema_motorista import MotoristaCreate
 from app.core.security import get_password_hash
-from app.crud.crud_aluno import get_usuario_by_email # Reutiliza a função
+from app.crud.crud_usuario import get_usuario_by_email
 
 def create_motorista(db: Session, motorista_in: MotoristaCreate) -> Motorista:
     # Cria o hash da senha

@@ -1,7 +1,7 @@
 from pydantic import BaseModel, EmailStr
 from datetime import date
 from typing import Optional
-from .schema_aluno import UsuarioRead # Reutiliza o schema de leitura do usuário
+from .schema_usuario import UsuarioRead # Reutiliza o schema de leitura do usuário
 
 # Schema para criação de Motorista (recebe dados do usuário e do motorista)
 class MotoristaCreate(BaseModel):

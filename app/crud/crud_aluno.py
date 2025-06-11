@@ -4,13 +4,6 @@ from app.models.usuario import Usuario
 from app.schemas.schema_aluno import AlunoCreate
 from app.core.security import get_password_hash
 
-def get_usuario_by_email(db: Session, email: str) -> Usuario | None:
-    return db.exec(select(Usuario).where(Usuario.email == email)).first()
-
-def get_usuario_by_id(db: Session, user_id: int) -> Usuario | None:
-    return db.get(Usuario, user_id)
-
-
 def create_aluno(db: Session, aluno_in: AlunoCreate) -> Aluno:
     # Cria o hash da senha
     hashed_password = get_password_hash(aluno_in.password)
