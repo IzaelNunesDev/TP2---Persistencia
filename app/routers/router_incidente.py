@@ -17,9 +17,9 @@ def create_new_incidente(incidente: IncidenteCreate, session: Session = Depends(
     if not crud_viagem.get_viagem_by_id(session, incidente.viagem_id):
         logger.warning(f"Viagem com id {incidente.viagem_id} não encontrada")
         raise HTTPException(status_code=404, detail=f"Viagem com id {incidente.viagem_id} não encontrada")
-    if not crud_usuario.get_usuario_by_id(session, user_id=incidente.reportador_id):
-        logger.warning(f"Usuário reportador com id {incidente.reportador_id} não encontrado")
-        raise HTTPException(status_code=404, detail=f"Usuário reportador com id {incidente.reportador_id} não encontrado")
+    if not crud_usuario.get_usuario_by_id(session, user_id=incidente.reportado_por_usuario_id):
+        logger.warning(f"Usuário reportador com id {incidente.reportado_por_usuario_id} não encontrado")
+        raise HTTPException(status_code=404, detail=f"Usuário reportador com id {incidente.reportado_por_usuario_id} não encontrado")
     try:
         novo_incidente = crud_incidente.create_incidente(db=session, incidente_in=incidente)
         logger.info(f"Incidente criado com ID {novo_incidente.id}")

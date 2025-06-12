@@ -17,8 +17,6 @@ def get_viagens(db: Session, ano: int = None, skip: int = 0, limit: int = 100) -
     return db.exec(query.offset(skip).limit(limit)).all()
 
 def get_viagem_by_id(db: Session, viagem_id: int) -> Viagem | None:
-    # Usando select para poder carregar os relacionamentos com options
-    # Isso é mais eficiente do que o lazy loading padrão em muitos casos.
     from app.models.rota import Rota
     from app.models.motorista import Motorista
     from app.models.veiculo import Veiculo

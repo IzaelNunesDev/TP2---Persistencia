@@ -43,7 +43,6 @@ def read_viagens(session: Session = Depends(get_session), ano: int = None, skip:
     Recupera uma lista de viagens, opcionalmente filtrada por ano.
     """
     logger.info(f"Listando viagens com filtro: ano='{ano}'")
-    # Esta função precisaria ser otimizada no CRUD para carregar relacionamentos
     viagens = get_viagens(session, ano=ano, skip=skip, limit=limit)
     return viagens
 

@@ -1,23 +1,10 @@
-# --- Web Framework ---
 fastapi
-
-# --- ASGI Server ---
-uvicorn[standard]
-
-# --- ORM e Banco de Dados ---
+uvicorn
 sqlmodel
 alembic
-
-# --- Driver do PostgreSQL ---
 psycopg2-binary
-
-# --- Gerenciamento de Configuração ---
 pydantic-settings
 pydantic[email]
 python-dotenv
-
-# --- Segurança ---
 passlib[bcrypt]
-
-# --- HTTP Requests ---
 requests

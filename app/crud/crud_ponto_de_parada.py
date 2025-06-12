@@ -13,6 +13,7 @@ def get_pontos_de_parada_by_rota(db: Session, rota_id: int, skip: int = 0, limit
     return db.exec(
         select(PontoDeParada)
         .where(PontoDeParada.rota_id == rota_id)
+        .order_by(PontoDeParada.ordem)
         .offset(skip)
         .limit(limit)
     ).all()
