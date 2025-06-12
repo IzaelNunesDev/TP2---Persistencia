@@ -1,6 +1,6 @@
 
-from fastapi import FastAPI
-from app.routers import router_aluno, router_motorista, router_rota, router_ponto_de_parada, router_veiculo, router_viagem, router_incidente, router_registro_frequencia # Importe outros routers aqui
+from fastapi import FastAPI, APIRouter
+from app.routers import router_aluno, router_motorista, router_rota, router_ponto_de_parada, router_veiculo, router_viagem, router_incidente, router_registro_frequencia
 
 app = FastAPI(
     title="RotaFácil API - TP2",
@@ -8,17 +8,23 @@ app = FastAPI(
     version="1.0.0"
 )
 
-# Inclui os endpoints do aluno no path /alunos
-app.include_router(router_aluno.router, prefix="/alunos", tags=["Alunos"])
-app.include_router(router_motorista.router, tags=["Motoristas"]) # O prefixo já está no router
-app.include_router(router_rota.router, tags=["Rotas"]) # O prefixo já está no router
-app.include_router(router_ponto_de_parada.router, tags=["Pontos de Parada"]) # O prefixo já está no router
-app.include_router(router_veiculo.router, tags=["Veículos"]) # O prefixo já está no router
-app.include_router(router_viagem.router, tags=["Viagens"]) # O prefixo já está no router
-app.include_router(router_incidente.router, tags=["Incidentes"]) # O prefixo já está no router
-app.include_router(router_registro_frequencia.router, tags=["Frequência"]) # O prefixo já está no router
-# Inclua os outros routers aqui (motoristas, rotas, etc.)
+# --- Roteador Principal da API v1 ---
+api_router = APIRouter(prefix="/api/v1")
+
+# Adiciona os routers de cada recurso ao router principal da API
+api_router.include_router(router_aluno.router, prefix="/alunos", tags=["Alunos"])
+api_router.include_router(router_motorista.router, prefix="/motoristas", tags=["Motoristas"])
+api_router.include_router(router_rota.router, prefix="/rotas", tags=["Rotas"])
+api_router.include_router(router_ponto_de_parada.router, prefix="/pontos-de-parada", tags=["Pontos de Parada"])
+api_router.include_router(router_veiculo.router, prefix="/veiculos", tags=["Veículos"])
+api_router.include_router(router_viagem.router, prefix="/viagens", tags=["Viagens"])
+api_router.include_router(router_incidente.router, prefix="/incidentes", tags=["Incidentes"])
+api_router.include_router(router_registro_frequencia.router, prefix="/registros-frequencia", tags=["Frequência"])
+
+# Inclui o router da API no app principal
+app.include_router(api_router)
 
 @app.get("/", tags=["Root"])
 def read_root():
+    """Endpoint raiz para verificar se a API está online."""
     return {"message": "Bem-vindo à API RotaFácil!"}

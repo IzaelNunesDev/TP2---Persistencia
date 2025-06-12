@@ -18,3 +18,6 @@ python-dotenv
 
 # --- Segurança ---
 passlib[bcrypt]
+
+# --- HTTP Requests ---
+requests

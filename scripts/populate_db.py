@@ -1,8 +1,7 @@
+# FILE: scripts/populate_db.py
+
 import requests
-import json
 import logging
-from pathlib import Path
-import os
 
 # Configuração do logger
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -16,19 +15,22 @@ ENDPOINTS = {
     "motoristas": "/motoristas/",
     "veiculos": "/veiculos/",
     "rotas": "/rotas/",
-    "pontos_parada": "/pontos-de-parada/",
     "viagens": "/viagens/",
-    "incidentes": "/incidentes/",
     "registros_frequencia": "/registros-frequencia/"
 }
 
 # Função para postar dados
 def post_data(endpoint, data):
+    """Envia um POST request para o endpoint especificado e retorna a resposta JSON."""
     try:
-        response = requests.post(f"{BASE_URL}{endpoint}", json=data)
-        response.raise_for_status()  # Lança exceção para códigos de erro HTTP
-        logging.info(f"Sucesso ao criar registro em {endpoint}: {response.json()['id']}")
-        return response.json()
+        url = f"{BASE_URL}{endpoint}"
+        logging.info(f"Enviando POST para {url} com dados: {data}")
+        response = requests.post(url, json=data)
+        response.raise_for_status()  # Lança exceção para códigos de erro HTTP (4xx ou 5xx)
+        
+        response_json = response.json()
+        logging.info(f"Sucesso! Registro criado em {endpoint} com ID: {response_json.get('id', 'N/A')}")
+        return response_json
     except requests.exceptions.RequestException as e:
         logging.error(f"Erro ao postar em {endpoint} com dados {data}: {e}")
         if e.response is not None:
@@ -36,105 +38,103 @@ def post_data(endpoint, data):
         return None
 
 def main():
-    # Carrega os dados mockados
-    data_path = Path(__file__).parent.parent / "data" / "mock_data.json"
-    with open(data_path, 'r', encoding='utf-8') as f:
-        mock_data = json.load(f)
+    logging.info("Iniciando a população do banco de dados com o cenário 'Mariana na Viagem UFC'...")
 
-    logging.info("Iniciando a população do banco de dados...")
-
-    # Dicionário para armazenar os IDs criados
-    created_ids = {
-        "alunos": [],
-        "motoristas": [],
-        "veiculos": [],
-        "rotas": [],
-        "viagens": [],
-        "usuarios": []
+    # Passo 1: Criar o Motorista
+    logging.info("--- Passo 1: Criando Motorista ---")
+    motorista_payload = {
+        "email": "carlos.souza@rotafacil.com",
+        "nome_completo": "Carlos Souza",
+        "password": "senhaMotorista456",
+        "cnh": "98765432100",
+        "data_admissao": "2022-08-15"
     }
+    motorista_response = post_data(ENDPOINTS["motoristas"], motorista_payload)
+    if not motorista_response:
+        logging.error("Falha ao criar motorista. Abortando.")
+        return
+    motorista_id = motorista_response['id']
 
-    # A ordem de população é importante devido às dependências
-    # 1. Usuários (Alunos e Motoristas)
-    for aluno in mock_data.get("alunos", []):
-        result = post_data(ENDPOINTS["alunos"], aluno)
-        if result:
-            created_ids["alunos"].append(result['id'])
-            created_ids["usuarios"].append(result['usuario']['id'])
+    # Passo 2: Criar o Aluno
+    logging.info("--- Passo 2: Criando Aluno ---")
+    aluno_payload = {
+        "email": "mariana.lima@aluno.ufc.br",
+        "nome_completo": "Mariana Lima",
+        "password": "senhaAluno789",
+        "matricula": "554433",
+        "telefone": "85912345678",
+        "possui_necessidade_especial": False
+    }
+    aluno_response = post_data(ENDPOINTS["alunos"], aluno_payload)
+    if not aluno_response:
+        logging.error("Falha ao criar aluno. Abortando.")
+        return
+    aluno_id = aluno_response['id']
 
-    for motorista_data in mock_data.get("motoristas", []):
-        motorista_payload = {
-            **motorista_data,
-            "data_admissao": motorista_data.get("data_admissao", "2023-01-15")
-        }
-        result = post_data(ENDPOINTS["motoristas"], motorista_payload)
-        if result:
-            created_ids["motoristas"].append(result['id'])
-            created_ids["usuarios"].append(result['usuario']['id'])
+    # Passo 3: Criar a Rota
+    logging.info("--- Passo 3: Criando Rota ---")
+    rota_payload = {
+        "nome_rota": "Rota UFC - Manhã",
+        "descricao": "Rota circular que passa pelos principais bairros e termina no Campus do Pici.",
+        "turno": "Manhã",
+        "limite_atrasos_semanal": 3,
+        "ativa": True
+    }
+    rota_response = post_data(ENDPOINTS["rotas"], rota_payload)
+    if not rota_response:
+        logging.error("Falha ao criar rota. Abortando.")
+        return
+    rota_id = rota_response['id']
 
-    # 2. Veículos e Rotas
-    for veiculo_data in mock_data.get("veiculos", []):
-        veiculo_payload = {
-            "placa": veiculo_data.get("placa"),
-            "modelo": veiculo_data.get("modelo"),
-            "capacidade_passageiros": veiculo_data.get("capacidade"),
-            "ano_fabricacao": veiculo_data.get("ano"),
-            "status_manutencao": veiculo_data.get("status_manutencao", "Disponível"),
-            "adaptado_pcd": veiculo_data.get("adaptado_pcd", False)
-        }
-        result = post_data(ENDPOINTS["veiculos"], veiculo_payload)
-        if result:
-            created_ids["veiculos"].append(result['id'])
+    # Passo 4: Criar o Veículo
+    logging.info("--- Passo 4: Criando Veículo ---")
+    veiculo_payload = {
+        "placa": "PQP2I23",
+        "modelo": "Marcopolo Torino S - Adaptado",
+        "capacidade_passageiros": 42,
+        "status_manutencao": "Disponível",
+        "adaptado_pcd": True,
+        "ano_fabricacao": 2023
+    }
+    veiculo_response = post_data(ENDPOINTS["veiculos"], veiculo_payload)
+    if not veiculo_response:
+        logging.error("Falha ao criar veículo. Abortando.")
+        return
+    veiculo_id = veiculo_response['id']
 
-    for rota_data in mock_data.get("rotas", []):
-        # Adapta o mock para o schema esperado pela API
-        rota_payload = {
-            "nome_rota": rota_data.get("nome"),
-            "descricao": rota_data.get("descricao"),
-            "turno": rota_data.get("turno", "Manhã"),  # Adiciona valor padrão
-            "limite_atrasos_semanal": rota_data.get("limite_atrasos_semanal", 5), # Adiciona valor padrão
-            "ativa": rota_data.get("ativa", True)
-        }
-        result = post_data(ENDPOINTS["rotas"], rota_payload)
-        if result:
-            created_ids["rotas"].append(result['id'])
+    # Passo 5: Criar a Viagem (Juntando tudo)
+    logging.info("--- Passo 5: Criando a Viagem (Conectando as entidades) ---")
+    viagem_payload = {
+        "data_viagem": "2024-05-22",
+        "hora_partida": "2024-05-22T06:30:00", # Mantido sem 'Z' para compatibilidade geral
+        "status": "Agendada",
+        "vagas_ocupadas": 0,
+        "rota_id": rota_id,
+        "motorista_id": motorista_id,
+        "veiculo_id": veiculo_id
+    }
+    viagem_response = post_data(ENDPOINTS["viagens"], viagem_payload)
+    if not viagem_response:
+        logging.error("Falha ao criar viagem. Abortando.")
+        return
+    viagem_id = viagem_response['id']
 
-    # 3. Pontos de Parada (dependem de Rotas)
-    for i, ponto_data in enumerate(mock_data.get("pontos_parada", [])):
-        if created_ids["rotas"] and ponto_data["rota_id"] <= len(created_ids["rotas"]):
-            ponto_payload = {
-                "rota_id": created_ids["rotas"][ponto_data["rota_id"] - 1],
-                "nome_ponto": ponto_data.get("nome"),
-                "endereco": ponto_data.get("endereco", f"Endereço do {ponto_data.get('nome')}"),
-                "latitude": ponto_data.get("latitude"),
-                "longitude": ponto_data.get("longitude"),
-                "ordem": ponto_data.get("ordem", i + 1)
-            }
-            post_data(ENDPOINTS["pontos_parada"], ponto_payload)
+    # Passo 6: Registrar a Frequência do Aluno na Viagem (A Ligação Final)
+    logging.info("--- Passo 6: Registrando Frequência (A Ligação Final) ---")
+    registro_payload = {
+        "viagem_id": viagem_id,
+        "aluno_id": aluno_id,
+        "tipo_registro": "embarque"
+    }
+    registro_response = post_data(ENDPOINTS["registros_frequencia"], registro_payload)
+    if not registro_response:
+        logging.error("Falha ao registrar frequência. Abortando.")
+        return
 
-    # 4. Viagens (dependem de Rotas, Veículos, Motoristas)
-    for viagem in mock_data.get("viagens", []):
-        if all(k in created_ids for k in ["rotas", "veiculos", "motoristas"]):
-            viagem["rota_id"] = created_ids["rotas"][viagem["rota_id"] - 1]
-            viagem["veiculo_id"] = created_ids["veiculos"][viagem["veiculo_id"] - 1]
-            viagem["motorista_id"] = created_ids["motoristas"][viagem["motorista_id"] - 1]
-            result = post_data(ENDPOINTS["viagens"], viagem)
-            if result:
-                created_ids["viagens"].append(result['id'])
-
-    # 5. Incidentes e Registros de Frequência (dependem de Viagens, Alunos, Usuários)
-    for incidente in mock_data.get("incidentes", []):
-        if created_ids["viagens"] and created_ids["usuarios"]:
-            incidente["viagem_id"] = created_ids["viagens"][incidente["viagem_id"] - 1]
-            incidente["reportador_id"] = created_ids["usuarios"][incidente["reportador_id"] - 1]
-            post_data(ENDPOINTS["incidentes"], incidente)
-
-    for registro in mock_data.get("registros_frequencia", []):
-        if created_ids["viagens"] and created_ids["alunos"]:
-            registro["viagem_id"] = created_ids["viagens"][registro["viagem_id"] - 1]
-            registro["aluno_id"] = created_ids["alunos"][registro["aluno_id"] - 1]
-            post_data(ENDPOINTS["registros_frequencia"], registro)
-
-    logging.info("População do banco de dados concluída.")
+    logging.info("=" * 50)
+    logging.info("Cenário completo criado com sucesso!")
+    logging.info(f"Aluna Mariana (ID {aluno_id}) registrada na Viagem (ID {viagem_id}).")
+    logging.info("=" * 50)
 
 if __name__ == "__main__":
     main()

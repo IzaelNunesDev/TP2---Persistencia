@@ -1,3 +1,4 @@
+from sqlmodel import SQLModel
 from pydantic import BaseModel, EmailStr
 from typing import Optional
 from .schema_usuario import UsuarioRead
